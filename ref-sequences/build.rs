@@ -1,0 +1,5 @@
+//! Generates the Rust API from an F Prime dictionary.
+
+pub fn main() {
+    fprime_build::generate("dictionary/FirstDeploymentTopologyDictionary.json");
+}

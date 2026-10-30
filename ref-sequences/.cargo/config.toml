@@ -1,0 +1,15 @@
+[target.wasm32v1-none]
+# `rust-lld`, then `wasm-opt` for size-optimized bins.
+linker = ".cargo/wasm-link"
+
+rustflags = [
+    # `spacewasm` feature-set
+    "-Ctarget-cpu=mvp",
+    "-Ctarget-feature=+mutable-globals",
+
+    # Guest stack, reserved at the bottom of linear memory.
+    "-Clink-arg=-zstack-size=512",
+
+    # One-byte pages, from the custom-page-sizes proposal.
+    "-Clink-arg=--page-size=1",
+]

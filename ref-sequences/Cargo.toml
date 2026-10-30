@@ -1,0 +1,61 @@
+[package]
+name = "ref-sequences"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[features]
+wasm = []
+
+[dependencies]
+fprime_core = "0.1.7"
+
+[build-dependencies]
+fprime_build = "0.1.7"
+
+[dev-dependencies]
+fprime_test = "0.1.7"
+
+[lib]
+test = false
+bench = false
+
+[[bin]]
+name = "startup"
+required-features = ["wasm"]
+test = false
+bench = false
+
+[[bin]]
+name = "safing"
+required-features = ["wasm"]
+test = false
+bench = false
+
+[[bin]]
+name = "send_no_op"
+required-features = ["wasm"]
+test = false
+bench = false
+
+[[bin]]
+name = "send_no_op_string"
+required-features = ["wasm"]
+test = false
+bench = false
+
+[[bin]]
+name = "send_test_cmd"
+required-features = ["wasm"]
+test = false
+bench = false
+
+
+# Optimized for smallest size
+[profile.release]
+lto = true
+opt-level = "s"
+codegen-units = 1
+panic = "abort"
+debug = false
+strip = true

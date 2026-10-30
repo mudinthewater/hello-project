@@ -1,0 +1,81 @@
+# ref-sequences
+
+F Prime sequences for this deployment, compiled to WebAssembly and run on board by
+[`Svc::WasmSequencer`](https://github.com/nasa/fprime).
+
+## Dependencies
+
+1. Install Rust: https://doc.rust-lang.org/cargo/getting-started/installation.html
+
+2. Install Wasm target and optional optimizer
+
+```shell
+rustup target add wasm32v1-none
+
+# (optional) for optimizing `.wasm` binaries for size
+cargo install wasm-opt
+```
+
+## Building
+
+```shell
+fprime-wasm build
+```
+
+Builds `.wasm` binaries to `target/wasm32v1-none/release/*.wasm`.
+These binaries can be uplinked and executed on-board using the WasmSequencer.
+
+> ![NOTE]
+> `fprime-wasm build/test` are wrappers around the Cargo tool and will
+> select the proper target/features needed.
+
+## Adding a sequence
+
+```shell
+fprime-wasm add <name>
+```
+
+- `src/bin/<name>.rs`. The new sequence
+- `tests/<name>.rs`. A template for testing this sequence
+
+`fprime-wasm add` also hooks the sequence build into the Cargo (Rust) build system.
+
+## Testing a sequence
+
+```shell
+fprime-wasm test
+```
+
+Builds the sequences, then runs every test in `tests/`.
+
+## Verifying a sequence
+
+```shell
+fprime-wasm verify
+```
+
+Load each module into the on-board Wasm interpreter, without running it, and size what
+that cost against the `sequencer.toml` limits. This is equivalent to the `LOAD` command
+on-board to validate the sequence and make sure it _can_ load.
+
+### Limits
+
+`sequencer.toml` holds the default set of memory settings of the WasmSequencer. These
+settings may be tuned to match your project's settings. Note that some of these settings
+are mapped to per-sequencer-instance settings and therefore multiple `.toml` files may
+be needed to model each instance.
+
+Sequence limit files should be in the root directory.
+The default `sequencer.toml` can be overriden per test with:
+
+```rust
+#[fprime_test(sequence = "startup", limits = "sequencer-payload.toml")]
+```
+
+`fprime-wasm verify --limits <path>` sizes against one the same way.
+
+## Dictionary
+
+`dictionary/FirstDeploymentTopologyDictionary.json` is this deployment's dictionary, and `build.rs` turns it into the
+typed API the sequences call. Replace it from a newer release build and re-run
+`fprime-wasm build`.
